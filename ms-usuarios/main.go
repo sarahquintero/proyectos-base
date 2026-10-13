@@ -21,7 +21,7 @@ import (
 	"ms-usuarios/services"
 )
 
-const nombreServicio = "ms-audios"
+const nombreServicio = "ms-usuarios"
 
 func main() {
 	puerto, _ := strconv.Atoi(env("PORT", "8082"))

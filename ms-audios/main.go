@@ -1,4 +1,4 @@
-package msaudios
+package main
 
 import (
 	"context"
