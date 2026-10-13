@@ -14,24 +14,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"ms-audios/controllers"
-	"ms-audios/discovery"
-	"ms-audios/middleware"
-	"ms-audios/repositories"
-	"ms-audios/services"
+	"ms-usuarios/controllers"
+	"ms-usuarios/discovery"
+	"ms-usuarios/middleware"
+	"ms-usuarios/repositories"
+	"ms-usuarios/services"
 )
 
 const nombreServicio = "ms-audios"
 
 func main() {
-	puerto, _ := strconv.Atoi(env("PORT", "8083"))
+	puerto, _ := strconv.Atoi(env("PORT", "8082"))
 	host := env("SERVICE_HOST", "127.0.0.1")
 	consulAddr := env("CONSUL_ADDR", "127.0.0.1:8500")
 	secreto := env("GATEWAY_SECRET", "secreto-gateway-2026")
 
-	repo := repositories.NewAudioRepository()
-	service := services.NewAudioService(repo)
-	controller := controllers.NewAudioController(service)
+	// Capas: acceso a datos -> fachada (services) -> controladores
+	repo := repositories.NewUsuarioRepository()
+	service := services.NewUsuarioService(repo)
+	controller := controllers.NewUsuarioController(service)
 
 	router := gin.Default()
 	router.Use(middleware.FiltroGateway(secreto))
@@ -45,6 +46,7 @@ func main() {
 		}
 	}()
 
+	// Al lanzarse, el microservicio se registra en el directorio de descubrimiento.
 	registro, err := discovery.Registrar(consulAddr, nombreServicio, host, puerto)
 	if err != nil {
 		log.Fatalf("no fue posible registrarse en Consul: %v", err)
